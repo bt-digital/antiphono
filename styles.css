@@ -11,7 +11,7 @@
 
 /* ===== Design tokens — dark canvas, cream as the foreground/accent ===== */
 :root{
-  --bg: #0A0A09;
+  --bg: #30302b;
   --bg-raised: #15150F;
   --cream: #FFFFE3;
   --cream-dim: #D9D9BE;

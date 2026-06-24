@@ -20,6 +20,24 @@ if ('IntersectionObserver' in window){
   revealEls.forEach(el => el.classList.add('is-visible'));
 }
 
+// ===== Sticky nav: tall on landing, compact once scrolled =====
+const topnav = document.getElementById('topnav');
+if (topnav) {
+  const SCROLL_THRESHOLD = 24;
+  let ticking = false;
+  const applyNavState = () => {
+    topnav.classList.toggle('is-compact', window.scrollY > SCROLL_THRESHOLD);
+    ticking = false;
+  };
+  applyNavState();
+  window.addEventListener('scroll', () => {
+    if (!ticking) {
+      requestAnimationFrame(applyNavState);
+      ticking = true;
+    }
+  }, { passive: true });
+}
+
 // ===== Contrast / theme toggle (cosmetic invert of root tokens) =====
 const themeToggle = document.getElementById('themeToggle');
 if (themeToggle) {

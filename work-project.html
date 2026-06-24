@@ -21,12 +21,24 @@
     <a href="articles.html">Articles</a>
   </nav>
   <div class="topnav__cta">
-    <button class="theme-toggle" id="themeToggle" aria-label="Toggle contrast mode" title="Toggle contrast">
-      <span class="theme-toggle__dot"></span>
-    </button>
     <a href="index.html#book" class="btn btn--small">Book a call</a>
+    <button class="nav-toggle" id="navToggle" aria-label="Toggle menu" aria-expanded="false" aria-controls="mobileMenu">
+      <span></span><span></span><span></span>
+    </button>
   </div>
 </header>
+
+<div class="mobile-menu" id="mobileMenu">
+  <nav class="mobile-menu__links" aria-label="Mobile">
+    <a href="index.html#services">Services</a>
+    <a href="index.html#philosophy">Philosophy</a>
+    <a href="index.html#clients">Clients</a>
+    <a href="work.html" class="is-current">Work</a>
+    <a href="reports.html">Research</a>
+    <a href="articles.html">Articles</a>
+  </nav>
+</div>
+
 
 <main>
   <section class="section project-hero" id="projectHero"></section>

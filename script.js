@@ -38,10 +38,27 @@ if (topnav) {
   }, { passive: true });
 }
 
-// ===== Contrast / theme toggle (cosmetic invert of root tokens) =====
-const themeToggle = document.getElementById('themeToggle');
-if (themeToggle) {
-  themeToggle.addEventListener('click', () => {
-    document.documentElement.classList.toggle('invert-mode');
+// ===== Mobile nav: hamburger toggle =====
+const navToggle = document.getElementById('navToggle');
+const mobileMenu = document.getElementById('mobileMenu');
+if (navToggle && mobileMenu) {
+  const closeMenu = () => {
+    navToggle.classList.remove('is-open');
+    mobileMenu.classList.remove('is-open');
+    navToggle.setAttribute('aria-expanded', 'false');
+    document.body.classList.remove('nav-open');
+  };
+  const openMenu = () => {
+    navToggle.classList.add('is-open');
+    mobileMenu.classList.add('is-open');
+    navToggle.setAttribute('aria-expanded', 'true');
+    document.body.classList.add('nav-open');
+  };
+  navToggle.addEventListener('click', () => {
+    if (mobileMenu.classList.contains('is-open')) closeMenu(); else openMenu();
+  });
+  mobileMenu.querySelectorAll('a').forEach((a) => a.addEventListener('click', closeMenu));
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeMenu();
   });
 }

@@ -1,0 +1,12 @@
+{
+  "name": "antiphono-site",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Antiphono — AI product design & research studio site",
+  "scripts": {
+    "start": "node server.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

@@ -38,6 +38,44 @@ if (topnav) {
   }, { passive: true });
 }
 
+// ===== Work scroll: sync sticky visual stage with scrolled chapter =====
+const workChapterEls = document.querySelectorAll('.work-chapter');
+const workFrameEls   = document.querySelectorAll('.work-frame');
+const workDotEls     = document.querySelectorAll('.work-scroll__dot');
+const workScrollCounter = document.getElementById('workScrollCounter');
+
+if (workChapterEls.length && workFrameEls.length) {
+  const activateProject = (idx) => {
+    workFrameEls.forEach((f, i) => f.classList.toggle('is-active', i === idx));
+    workChapterEls.forEach((c, i) => c.classList.toggle('is-active', i === idx));
+    workDotEls.forEach((d, i) => d.classList.toggle('is-active', i === idx));
+    if (workScrollCounter) {
+      workScrollCounter.textContent =
+        `${String(idx + 1).padStart(2, '0')} / ${String(workChapterEls.length).padStart(2, '0')}`;
+    }
+  };
+
+  const chapterIO = new IntersectionObserver(
+    (entries) => {
+      let best = null, bestRatio = 0;
+      entries.forEach(entry => {
+        if (entry.isIntersecting && entry.intersectionRatio > bestRatio) {
+          best = entry; bestRatio = entry.intersectionRatio;
+        }
+      });
+      if (best) activateProject(parseInt(best.target.dataset.index, 10));
+    },
+    { threshold: [0.3, 0.5, 0.7], rootMargin: '0px 0px -25% 0px' }
+  );
+  workChapterEls.forEach(ch => chapterIO.observe(ch));
+
+  workDotEls.forEach((dot, i) => {
+    dot.addEventListener('click', () =>
+      workChapterEls[i]?.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    );
+  });
+}
+
 // ===== Mobile nav: hamburger toggle =====
 const navToggle = document.getElementById('navToggle');
 const mobileMenu = document.getElementById('mobileMenu');

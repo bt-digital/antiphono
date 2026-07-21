@@ -1,6 +1,228 @@
 /* Shared rendering helpers used across index.html, work.html, work-project.html,
    articles.html, article.html and reports.html. Requires data.js to be loaded first. */
 
+/* ===== Animated placeholder visuals for work scroll frames ===== */
+const FRAME_CONTENT = {
+  fintech: `<svg viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;" preserveAspectRatio="xMidYMid slice">
+  <rect width="480" height="360" fill="#0D0D0B"/>
+  <rect width="56" height="360" fill="#121210"/>
+  <rect x="16" y="48" width="24" height="24" rx="3" fill="rgba(255,255,227,0.12)"/>
+  <rect x="16" y="90" width="24" height="24" rx="3" fill="rgba(255,255,227,0.04)"/>
+  <rect x="16" y="130" width="24" height="24" rx="3" fill="rgba(255,255,227,0.04)"/>
+  <rect x="16" y="170" width="24" height="24" rx="3" fill="rgba(255,255,227,0.04)"/>
+  <rect x="56" width="424" height="40" fill="#111110"/>
+  <rect x="72" y="13" width="90" height="8" rx="2" fill="rgba(255,255,227,0.4)"/>
+  <rect x="384" y="11" width="56" height="18" rx="2" fill="rgba(255,255,227,0.06)"/>
+  <rect x="72" y="60" width="140" height="11" rx="2" fill="rgba(255,255,227,0.5)"/>
+  <rect x="72" y="78" width="90" height="8" rx="2" fill="rgba(255,255,227,0.18)"/>
+  <circle cx="378" cy="122" r="48" fill="none" stroke="rgba(255,255,227,0.06)" stroke-width="9"/>
+  <circle cx="378" cy="122" r="48" fill="none" stroke="rgba(255,255,227,0.5)" stroke-width="9" stroke-dasharray="0 302" stroke-linecap="round" transform="rotate(-90 378 122)">
+    <animate attributeName="stroke-dasharray" values="0 302;220 82" dur="1.4s" begin="0.3s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/>
+  </circle>
+  <text x="378" y="117" text-anchor="middle" fill="rgba(255,255,227,0.85)" font-size="22" font-weight="700" font-family="system-ui,sans-serif">74</text>
+  <text x="378" y="133" text-anchor="middle" fill="rgba(255,255,227,0.3)" font-size="9" font-family="system-ui,sans-serif" letter-spacing="0.08em">RISK SCORE</text>
+  <line x1="72" y1="200" x2="290" y2="200" stroke="rgba(255,255,227,0.05)" stroke-width="1"/>
+  <line x1="72" y1="222" x2="290" y2="222" stroke="rgba(255,255,227,0.05)" stroke-width="1"/>
+  <line x1="72" y1="244" x2="290" y2="244" stroke="rgba(255,255,227,0.05)" stroke-width="1"/>
+  <rect x="86" y="265" width="22" height="0" rx="1" fill="rgba(255,255,227,0.18)"><animate attributeName="y" values="265;192;192" dur="0.7s" begin="0.3s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/><animate attributeName="height" values="0;73;73" dur="0.7s" begin="0.3s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/></rect>
+  <rect x="122" y="265" width="22" height="0" rx="1" fill="rgba(255,255,227,0.35)"><animate attributeName="y" values="265;220;220" dur="0.7s" begin="0.45s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/><animate attributeName="height" values="0;45;45" dur="0.7s" begin="0.45s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/></rect>
+  <rect x="158" y="265" width="22" height="0" rx="1" fill="rgba(255,255,227,0.52)"><animate attributeName="y" values="265;204;204" dur="0.7s" begin="0.6s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/><animate attributeName="height" values="0;61;61" dur="0.7s" begin="0.6s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/></rect>
+  <rect x="194" y="265" width="22" height="0" rx="1" fill="rgba(255,255,227,0.24)"><animate attributeName="y" values="265;232;232" dur="0.7s" begin="0.75s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/><animate attributeName="height" values="0;33;33" dur="0.7s" begin="0.75s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/></rect>
+  <rect x="230" y="265" width="22" height="0" rx="1" fill="rgba(255,255,227,0.42)"><animate attributeName="y" values="265;212;212" dur="0.7s" begin="0.9s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/><animate attributeName="height" values="0;53;53" dur="0.7s" begin="0.9s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/></rect>
+  <rect x="266" y="265" width="22" height="0" rx="1" fill="rgba(255,255,227,0.16)"><animate attributeName="y" values="265;246;246" dur="0.7s" begin="1.05s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/><animate attributeName="height" values="0;19;19" dur="0.7s" begin="1.05s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/></rect>
+  <text x="97" y="280" text-anchor="middle" fill="rgba(255,255,227,0.18)" font-size="7" font-family="system-ui,sans-serif">DEVICE</text>
+  <text x="133" y="280" text-anchor="middle" fill="rgba(255,255,227,0.18)" font-size="7" font-family="system-ui,sans-serif">VEL.</text>
+  <text x="169" y="280" text-anchor="middle" fill="rgba(255,255,227,0.18)" font-size="7" font-family="system-ui,sans-serif">MERCH</text>
+  <text x="205" y="280" text-anchor="middle" fill="rgba(255,255,227,0.18)" font-size="7" font-family="system-ui,sans-serif">LOC.</text>
+  <text x="241" y="280" text-anchor="middle" fill="rgba(255,255,227,0.18)" font-size="7" font-family="system-ui,sans-serif">TIME</text>
+  <text x="277" y="280" text-anchor="middle" fill="rgba(255,255,227,0.18)" font-size="7" font-family="system-ui,sans-serif">AMT.</text>
+  <rect x="72" y="298" width="336" height="1" fill="rgba(255,255,227,0.06)"/>
+  <rect x="72" y="312" width="80" height="7" rx="1" fill="rgba(255,255,227,0.22)"/>
+  <rect x="362" y="308" width="46" height="14" rx="2" fill="rgba(111,227,140,0.12)"/>
+  <rect x="72" y="330" width="100" height="7" rx="1" fill="rgba(255,255,227,0.14)"/>
+  <rect x="362" y="326" width="46" height="14" rx="2" fill="rgba(255,255,227,0.05)"/>
+</svg>`,
+
+  health: `<svg viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;" preserveAspectRatio="xMidYMid slice">
+  <rect width="480" height="360" fill="#090E0C"/>
+  <rect width="480" height="40" fill="#0C1310"/>
+  <rect x="16" y="14" width="110" height="8" rx="2" fill="rgba(255,255,227,0.38)"/>
+  <rect x="390" y="11" width="74" height="18" rx="9" fill="rgba(111,227,140,0.08)" stroke="rgba(111,227,140,0.18)" stroke-width="1"/>
+  <circle cx="402" cy="20" r="3" fill="#6FE38C"><animate attributeName="opacity" values="1;0.3;1" dur="1.5s" repeatCount="indefinite"/></circle>
+  <text x="410" y="24" fill="rgba(111,227,140,0.75)" font-size="7" font-family="system-ui,sans-serif" letter-spacing="0.07em">LIVE</text>
+  <rect x="16" y="55" width="140" height="58" rx="3" fill="rgba(111,227,140,0.05)" stroke="rgba(111,227,140,0.14)" stroke-width="1"/>
+  <rect x="28" y="68" width="48" height="8" rx="2" fill="rgba(111,227,140,0.55)"/>
+  <rect x="28" y="83" width="80" height="6" rx="2" fill="rgba(255,255,227,0.25)"/>
+  <rect x="28" y="94" width="60" height="6" rx="2" fill="rgba(255,255,227,0.1)"/>
+  <rect x="170" y="55" width="140" height="58" rx="3" fill="rgba(255,200,100,0.05)" stroke="rgba(255,200,100,0.14)" stroke-width="1"/>
+  <rect x="182" y="68" width="62" height="8" rx="2" fill="rgba(255,200,100,0.5)"/>
+  <rect x="182" y="83" width="80" height="6" rx="2" fill="rgba(255,255,227,0.22)"/>
+  <rect x="182" y="94" width="50" height="6" rx="2" fill="rgba(255,255,227,0.08)"/>
+  <rect x="324" y="55" width="140" height="58" rx="3" fill="rgba(255,90,90,0.04)" stroke="rgba(255,90,90,0.12)" stroke-width="1"/>
+  <rect x="336" y="68" width="38" height="8" rx="2" fill="rgba(255,90,90,0.42)"/>
+  <rect x="336" y="83" width="70" height="6" rx="2" fill="rgba(255,255,227,0.22)"/>
+  <rect x="336" y="94" width="52" height="6" rx="2" fill="rgba(255,255,227,0.08)"/>
+  <rect x="16" y="130" width="90" height="9" rx="2" fill="rgba(255,255,227,0.28)"/>
+  <line x1="16" y1="200" x2="464" y2="200" stroke="rgba(255,255,227,0.04)" stroke-width="1" stroke-dasharray="4 4"/>
+  <polyline points="16,200 46,200 56,168 66,232 76,200 100,200 114,154 124,246 134,200 158,200 168,180 178,220 200,200 258,200 274,185 286,215 300,200 338,200 350,174 360,226 370,200 408,200 420,180 430,220 448,200 464,200" fill="none" stroke="rgba(111,227,140,0.65)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round" stroke-dasharray="800" stroke-dashoffset="800">
+    <animate attributeName="stroke-dashoffset" values="800;0" dur="2s" begin="0.4s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/>
+  </polyline>
+  <rect x="16" y="244" width="448" height="1" fill="rgba(255,255,227,0.07)"/>
+  <circle cx="30" cy="264" r="6" fill="rgba(111,227,140,0.25)" stroke="rgba(111,227,140,0.4)" stroke-width="1"/>
+  <rect x="44" y="258" width="82" height="7" rx="2" fill="rgba(255,255,227,0.38)"/>
+  <rect x="44" y="269" width="52" height="6" rx="2" fill="rgba(255,255,227,0.14)"/>
+  <rect x="384" y="254" width="64" height="18" rx="2" fill="rgba(111,227,140,0.1)"/>
+  <text x="416" y="267" text-anchor="middle" fill="rgba(111,227,140,0.65)" font-size="8" font-family="system-ui,sans-serif">HIGH</text>
+  <rect x="16" y="284" width="448" height="1" fill="rgba(255,255,227,0.05)"/>
+  <circle cx="30" cy="304" r="6" fill="rgba(255,200,100,0.25)" stroke="rgba(255,200,100,0.35)" stroke-width="1"/>
+  <rect x="44" y="298" width="92" height="7" rx="2" fill="rgba(255,255,227,0.28)"/>
+  <rect x="44" y="309" width="62" height="6" rx="2" fill="rgba(255,255,227,0.1)"/>
+  <rect x="384" y="294" width="64" height="18" rx="2" fill="rgba(255,200,100,0.08)"/>
+  <text x="416" y="307" text-anchor="middle" fill="rgba(255,200,100,0.6)" font-size="8" font-family="system-ui,sans-serif">MED</text>
+  <rect x="16" y="324" width="448" height="1" fill="rgba(255,255,227,0.05)"/>
+  <circle cx="30" cy="344" r="6" fill="rgba(255,255,227,0.06)" stroke="rgba(255,255,227,0.12)" stroke-width="1"/>
+  <rect x="44" y="338" width="72" height="7" rx="2" fill="rgba(255,255,227,0.2)"/>
+  <rect x="44" y="349" width="50" height="6" rx="2" fill="rgba(255,255,227,0.08)"/>
+  <rect x="384" y="334" width="64" height="18" rx="2" fill="rgba(255,255,227,0.04)"/>
+  <text x="416" y="347" text-anchor="middle" fill="rgba(255,255,227,0.25)" font-size="8" font-family="system-ui,sans-serif">LOW</text>
+</svg>`,
+
+  robotics: `<svg viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;" preserveAspectRatio="xMidYMid slice">
+  <rect width="480" height="360" fill="#09090D"/>
+  <rect width="480" height="40" fill="#0C0C12"/>
+  <rect x="16" y="14" width="120" height="8" rx="2" fill="rgba(255,255,227,0.38)"/>
+  <rect x="388" y="10" width="76" height="20" rx="10" fill="rgba(111,227,140,0.08)" stroke="rgba(111,227,140,0.18)" stroke-width="1"/>
+  <circle cx="400" cy="20" r="3" fill="#6FE38C"><animate attributeName="opacity" values="1;0.3;1" dur="1.4s" repeatCount="indefinite"/></circle>
+  <text x="408" y="24" fill="rgba(111,227,140,0.75)" font-size="7" font-family="system-ui,sans-serif" letter-spacing="0.07em">LIVE</text>
+  <g stroke="rgba(255,255,227,0.035)" stroke-width="1">
+    <line x1="0" y1="80" x2="310" y2="80"/><line x1="0" y1="120" x2="310" y2="120"/>
+    <line x1="0" y1="160" x2="310" y2="160"/><line x1="0" y1="200" x2="310" y2="200"/>
+    <line x1="0" y1="240" x2="310" y2="240"/><line x1="0" y1="280" x2="310" y2="280"/>
+    <line x1="0" y1="320" x2="310" y2="320"/>
+    <line x1="40" y1="40" x2="40" y2="360"/><line x1="80" y1="40" x2="80" y2="360"/>
+    <line x1="120" y1="40" x2="120" y2="360"/><line x1="160" y1="40" x2="160" y2="360"/>
+    <line x1="200" y1="40" x2="200" y2="360"/><line x1="240" y1="40" x2="240" y2="360"/>
+    <line x1="280" y1="40" x2="280" y2="360"/>
+  </g>
+  <path d="M80,104 L160,184 L240,144 L200,264" fill="none" stroke="rgba(255,255,227,0.1)" stroke-width="1" stroke-dasharray="5 4"/>
+  <path d="M280,84 L240,144 L160,184" fill="none" stroke="rgba(255,255,227,0.07)" stroke-width="1" stroke-dasharray="5 4"/>
+  <circle cx="80" cy="104" r="12" fill="rgba(111,227,140,0.08)"><animate attributeName="r" values="12;17;12" dur="2.2s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0.5;1" dur="2.2s" repeatCount="indefinite"/></circle>
+  <circle cx="80" cy="104" r="5" fill="#6FE38C"/>
+  <circle cx="160" cy="184" r="12" fill="rgba(111,227,140,0.08)"><animate attributeName="r" values="12;17;12" dur="2.5s" begin="0.4s" repeatCount="indefinite"/><animate attributeName="opacity" values="1;0.5;1" dur="2.5s" begin="0.4s" repeatCount="indefinite"/></circle>
+  <circle cx="160" cy="184" r="5" fill="#6FE38C"/>
+  <circle cx="240" cy="144" r="12" fill="rgba(111,227,140,0.08)"><animate attributeName="r" values="12;17;12" dur="1.9s" begin="0.8s" repeatCount="indefinite"/></circle>
+  <circle cx="240" cy="144" r="5" fill="#6FE38C"/>
+  <circle cx="200" cy="264" r="12" fill="rgba(255,200,100,0.1)"><animate attributeName="r" values="12;18;12" dur="1.3s" repeatCount="indefinite"/></circle>
+  <circle cx="200" cy="264" r="5" fill="rgba(255,200,100,0.9)"/>
+  <circle cx="280" cy="84" r="13" fill="rgba(255,90,90,0.1)"><animate attributeName="r" values="13;20;13" dur="1s" repeatCount="indefinite"/></circle>
+  <circle cx="280" cy="84" r="5" fill="rgba(255,90,90,0.9)"/>
+  <rect x="320" y="40" width="160" height="320" fill="rgba(255,255,227,0.015)"/>
+  <line x1="320" y1="40" x2="320" y2="360" stroke="rgba(255,255,227,0.07)" stroke-width="1"/>
+  <rect x="332" y="56" width="136" height="8" rx="2" fill="rgba(255,255,227,0.24)"/>
+  <rect x="332" y="76" width="136" height="38" rx="2" fill="rgba(111,227,140,0.04)" stroke="rgba(111,227,140,0.1)" stroke-width="1"/>
+  <circle cx="346" cy="95" r="5" fill="#6FE38C"/>
+  <rect x="358" y="89" width="62" height="7" rx="1" fill="rgba(255,255,227,0.3)"/>
+  <rect x="358" y="100" width="42" height="5" rx="1" fill="rgba(255,255,227,0.12)"/>
+  <rect x="332" y="120" width="136" height="38" rx="2" fill="rgba(255,255,227,0.02)"/>
+  <circle cx="346" cy="139" r="5" fill="#6FE38C"/>
+  <rect x="358" y="133" width="52" height="7" rx="1" fill="rgba(255,255,227,0.24)"/>
+  <rect x="358" y="144" width="40" height="5" rx="1" fill="rgba(255,255,227,0.09)"/>
+  <rect x="332" y="164" width="136" height="38" rx="2" fill="rgba(255,200,100,0.04)" stroke="rgba(255,200,100,0.1)" stroke-width="1"/>
+  <circle cx="346" cy="183" r="5" fill="rgba(255,200,100,0.9)"/>
+  <rect x="358" y="177" width="72" height="7" rx="1" fill="rgba(255,255,227,0.24)"/>
+  <rect x="358" y="188" width="50" height="5" rx="1" fill="rgba(255,255,227,0.09)"/>
+  <rect x="332" y="208" width="136" height="38" rx="2" fill="rgba(255,90,90,0.06)" stroke="rgba(255,90,90,0.14)" stroke-width="1"/>
+  <circle cx="346" cy="227" r="5" fill="rgba(255,90,90,0.9)"/>
+  <rect x="358" y="221" width="56" height="7" rx="1" fill="rgba(255,255,227,0.24)"/>
+  <rect x="358" y="232" width="82" height="5" rx="1" fill="rgba(255,90,90,0.28)"/>
+  <rect x="332" y="252" width="136" height="38" rx="2" fill="rgba(255,255,227,0.02)"/>
+  <circle cx="346" cy="271" r="5" fill="rgba(255,255,227,0.1)" stroke="rgba(255,255,227,0.2)" stroke-width="1"/>
+  <rect x="358" y="265" width="48" height="7" rx="1" fill="rgba(255,255,227,0.18)"/>
+  <rect x="358" y="276" width="38" height="5" rx="1" fill="rgba(255,255,227,0.07)"/>
+</svg>`,
+
+  logistics: `<svg viewBox="0 0 480 360" xmlns="http://www.w3.org/2000/svg" style="width:100%;height:100%;display:block;" preserveAspectRatio="xMidYMid slice">
+  <rect width="480" height="360" fill="#0C0B09"/>
+  <rect width="480" height="40" fill="#100F0D"/>
+  <rect x="16" y="14" width="126" height="8" rx="2" fill="rgba(255,255,227,0.4)"/>
+  <rect x="16" y="55" width="104" height="56" rx="3" fill="rgba(255,255,227,0.025)" stroke="rgba(255,255,227,0.09)" stroke-width="1"/>
+  <rect x="28" y="69" width="44" height="9" rx="2" fill="rgba(255,255,227,0.55)"/>
+  <rect x="28" y="84" width="64" height="6" rx="2" fill="rgba(255,255,227,0.18)"/>
+  <rect x="28" y="94" width="52" height="6" rx="2" fill="rgba(111,227,140,0.35)"/>
+  <rect x="132" y="55" width="104" height="56" rx="3" fill="rgba(255,255,227,0.025)" stroke="rgba(255,255,227,0.09)" stroke-width="1"/>
+  <rect x="144" y="69" width="52" height="9" rx="2" fill="rgba(255,255,227,0.48)"/>
+  <rect x="144" y="84" width="64" height="6" rx="2" fill="rgba(255,255,227,0.18)"/>
+  <rect x="144" y="94" width="42" height="6" rx="2" fill="rgba(255,200,100,0.35)"/>
+  <rect x="248" y="55" width="104" height="56" rx="3" fill="rgba(255,255,227,0.025)" stroke="rgba(255,255,227,0.09)" stroke-width="1"/>
+  <rect x="260" y="69" width="48" height="9" rx="2" fill="rgba(255,255,227,0.42)"/>
+  <rect x="260" y="84" width="64" height="6" rx="2" fill="rgba(255,255,227,0.18)"/>
+  <rect x="260" y="94" width="52" height="6" rx="2" fill="rgba(255,255,227,0.14)"/>
+  <rect x="16" y="124" width="88" height="9" rx="2" fill="rgba(255,255,227,0.3)"/>
+  <g stroke="rgba(255,255,227,0.045)" stroke-width="1">
+    <line x1="16" y1="160" x2="464" y2="160"/>
+    <line x1="16" y1="200" x2="464" y2="200"/>
+    <line x1="16" y1="240" x2="464" y2="240"/>
+    <line x1="16" y1="280" x2="464" y2="280"/>
+  </g>
+  <polygon points="16,260 80,242 150,228 220,238 290,218 360,202 430,196 464,192 464,228 430,234 360,244 290,258 220,272 150,264 80,275 16,288" fill="rgba(255,255,227,0.035)"/>
+  <line x1="290" y1="140" x2="290" y2="295" stroke="rgba(255,255,227,0.14)" stroke-width="1" stroke-dasharray="4 4"/>
+  <text x="296" y="150" fill="rgba(255,255,227,0.28)" font-size="8" font-family="system-ui,sans-serif" letter-spacing="0.06em">FORECAST</text>
+  <polyline points="16,265 80,248 150,236 220,245 290,228 360,214 430,207 464,204" fill="none" stroke="rgba(255,255,227,0.7)" stroke-width="1.8" stroke-linejoin="round" stroke-dasharray="600" stroke-dashoffset="600">
+    <animate attributeName="stroke-dashoffset" values="600;0" dur="1.8s" begin="0.3s" fill="freeze" calcMode="spline" keySplines="0.4 0 0.2 1"/>
+  </polyline>
+  <polyline points="16,265 80,248 150,236 220,245 290,228" fill="none" stroke="rgba(255,255,227,0.18)" stroke-width="1" stroke-dasharray="4 4" stroke-linejoin="round"/>
+  <text x="16" y="306" fill="rgba(255,255,227,0.18)" font-size="8" font-family="system-ui,sans-serif">WK 18</text>
+  <text x="78" y="306" fill="rgba(255,255,227,0.18)" font-size="8" font-family="system-ui,sans-serif">WK 19</text>
+  <text x="146" y="306" fill="rgba(255,255,227,0.18)" font-size="8" font-family="system-ui,sans-serif">WK 20</text>
+  <text x="216" y="306" fill="rgba(255,255,227,0.18)" font-size="8" font-family="system-ui,sans-serif">WK 21</text>
+  <text x="284" y="306" fill="rgba(255,255,227,0.28)" font-size="8" font-family="system-ui,sans-serif">WK 22</text>
+  <text x="352" y="306" fill="rgba(255,255,227,0.18)" font-size="8" font-family="system-ui,sans-serif">WK 23</text>
+  <text x="420" y="306" fill="rgba(255,255,227,0.18)" font-size="8" font-family="system-ui,sans-serif">WK 24</text>
+  <rect x="16" y="318" width="448" height="1" fill="rgba(255,255,227,0.06)"/>
+  <text x="16" y="337" fill="rgba(255,255,227,0.22)" font-size="8" font-family="system-ui,sans-serif" letter-spacing="0.04em">3 ANOMALIES RANKED</text>
+  <rect x="298" y="324" width="82" height="18" rx="2" fill="rgba(255,200,100,0.08)" stroke="rgba(255,200,100,0.18)" stroke-width="1"/>
+  <text x="339" y="337" text-anchor="middle" fill="rgba(255,200,100,0.65)" font-size="8" font-family="system-ui,sans-serif">REVIEW →</text>
+</svg>`
+};
+
+/* ===== Work scroll: cinematic immersive homepage showcase ===== */
+function renderWorkScroll(container, projects) {
+  if (!container) return;
+  const stage = container.querySelector('.work-scroll__stage');
+  const chaptersEl = container.querySelector('.work-scroll__chapters');
+  if (!stage || !chaptersEl) return;
+
+  stage.innerHTML = projects.map((p, i) => {
+    const svg = FRAME_CONTENT[p.visual] || FRAME_CONTENT.fintech;
+    return `<div class="work-frame${i === 0 ? ' is-active' : ''}" data-frame="${i}">
+      <div class="work-frame__asset">${svg}</div>
+    </div>`;
+  }).join('') + `
+    <div class="work-scroll__stage-footer">
+      <div class="work-scroll__dots">
+        ${projects.map((_, i) => `<button class="work-scroll__dot${i === 0 ? ' is-active' : ''}" data-dot="${i}" aria-label="Go to project ${i + 1}"></button>`).join('')}
+      </div>
+      <span class="work-scroll__counter" id="workScrollCounter">01 / 0${projects.length}</span>
+    </div>`;
+
+  chaptersEl.innerHTML = projects.map((p, i) => {
+    const subtitle = p.title.includes(' — ') ? p.title.split(' — ').slice(1).join(' — ') : p.title;
+    return `<a class="work-chapter${i === 0 ? ' is-active' : ''}"
+        href="work-project.html?slug=${encodeURIComponent(p.slug)}"
+        data-index="${i}"
+        data-visual="${escapeHTML(p.visual)}">
+      <span class="work-chapter__client">${String(i + 1).padStart(2, '0')} / ${escapeHTML(p.client)}</span>
+      <h3 class="work-chapter__title">${escapeHTML(subtitle)}</h3>
+      <p class="work-chapter__summary">${escapeHTML(p.summary)}</p>
+      <div class="work-chapter__chips">
+        ${chipsHTML(p.categories)}
+        ${p.active ? '<span class="chip-active"><span class="chip-active__dot"></span>Active</span>' : ''}
+      </div>
+      <span class="work-chapter__cta">View case study ${ARROW_SVG}</span>
+    </a>`;
+  }).join('');
+}
+
 const ARROW_SVG = '<svg class="link-arrow" viewBox="0 0 16 16" aria-hidden="true"><path d="M3 13L13 3M5 3h8v8" stroke="currentColor" stroke-width="1.3" fill="none"/></svg>';
 
 const VISUAL_ICONS = {

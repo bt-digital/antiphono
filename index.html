@@ -198,10 +198,13 @@
       <h2 class="section__title">Selected work</h2>
     </div>
 
-    <!-- Visuals are generative placeholders standing in for real case-study imagery.
-         Swap each .work-tile__visual--* background in styles.css for a photo/screenshot when ready.
-         Rendered from the first 4 entries in data.js (PROJECTS) — see render.js. -->
-    <div id="workShowcase"></div>
+    <!-- Scroll-driven showcase: sticky visual stage (left) + scrollable project chapters (right).
+         Drop in a real <img> or <video> inside .work-frame__asset to replace placeholder SVGs.
+         Rendered from the first 4 entries in data.js (PROJECTS) — see render.js renderWorkScroll(). -->
+    <div class="work-scroll" id="workScroll">
+      <div class="work-scroll__stage" id="workStage"></div>
+      <div class="work-scroll__chapters" id="workChapters"></div>
+    </div>
 
     <div class="section__inner section__view-all">
       <a href="work.html" class="btn btn--ghost">View all work</a>
@@ -308,7 +311,7 @@
 <script src="data.js"></script>
 <script src="render.js"></script>
 <script>
-  renderWorkGrid(document.getElementById('workShowcase'), PROJECTS.slice(0, 4));
+  renderWorkScroll(document.getElementById('workScroll'), PROJECTS.slice(0, 4));
   renderReportList(document.getElementById('reportsList'), REPORTS);
   renderArticleList(document.getElementById('articlesList'), ARTICLES.slice(0, 5));
 </script>

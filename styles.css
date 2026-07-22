@@ -535,6 +535,7 @@ body.nav-open{overflow:hidden;}
   transition:background .25s var(--ease), color .25s var(--ease);
 }
 .rss-btn:hover{background:var(--cream);color:var(--ink);}
+.article-list__empty{font-size:15px;color:var(--grey);padding:48px 0;border-top:1px solid var(--line);}
 .rss-hint{font-size:13px;font-weight:400;color:var(--grey-soft);margin-top:24px;}
 .rss-hint code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;background:var(--line-soft);padding:2px 6px;border-radius:3px;}
 

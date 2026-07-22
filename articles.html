@@ -107,12 +107,12 @@
   const filtersEl = document.getElementById('articleFilters');
 
   async function loadArticles() {
-    let articles = ARTICLES;
+    let articles = [];
     try {
       const res = await fetch('/api/articles');
       if (res.ok) {
         const rss = await res.json();
-        if (Array.isArray(rss) && rss.length > 0) articles = rss;
+        if (Array.isArray(rss)) articles = rss;
       }
     } catch (_) {}
     renderArticleList(articlesList, articles);

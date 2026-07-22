@@ -388,12 +388,17 @@ function articleRowHTML(article) {
 
 function renderArticleList(container, articles) {
   if (!container) return;
+  if (!articles.length) {
+    container.innerHTML = '<p class="article-list__empty">Articles are on their way — check back soon.</p>';
+    return;
+  }
   container.innerHTML = articles.map(articleRowHTML).join('');
 }
 
 function setupArticleFilters(filterContainer, listContainer, articles) {
   if (!filterContainer || !listContainer) return;
   const data = articles || ARTICLES;
+  if (!data.length) { filterContainer.style.display = 'none'; return; }
   const categories = ['All', ...new Set(data.map((a) => a.category))];
   filterContainer.innerHTML = categories
     .map((c, i) => `<button class="filter-chip${i === 0 ? ' is-active' : ''}" data-filter="${escapeHTML(c)}" type="button">${escapeHTML(c)}</button>`)

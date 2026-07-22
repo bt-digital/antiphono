@@ -91,7 +91,18 @@
 <script src="data.js"></script>
 <script src="render.js"></script>
 <script>
-  renderArticleDetailPage();
+  async function initArticle() {
+    let articles = ARTICLES;
+    try {
+      const res = await fetch('/api/articles');
+      if (res.ok) {
+        const rss = await res.json();
+        if (Array.isArray(rss) && rss.length > 0) articles = rss;
+      }
+    } catch (_) {}
+    renderArticleDetailPage(articles);
+  }
+  initArticle();
 </script>
 <script src="script.js"></script>
 </body>

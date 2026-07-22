@@ -96,25 +96,29 @@
 <script src="data.js"></script>
 <script src="render.js"></script>
 <script>
-  // Point this at any public RSS/Atom feed URL to eventually replace ARTICLES in data.js.
-  const ARTICLES_RSS_URL = '';
+  const RSS_FEED_URL = 'https://app.trysoro.com/api/rss/4bf8bb35-204c-4ff2-8667-8720cfb5ca54';
   const rssUrlDisplay = document.getElementById('rssUrlDisplay');
-  if (rssUrlDisplay) rssUrlDisplay.textContent = ARTICLES_RSS_URL || 'feed.xml';
+  if (rssUrlDisplay) rssUrlDisplay.textContent = RSS_FEED_URL;
+
   const rssBtn = document.getElementById('rssBtn');
-  if (rssBtn) {
-    rssBtn.addEventListener('click', () => {
-      if (ARTICLES_RSS_URL) {
-        window.open(ARTICLES_RSS_URL, '_blank', 'noopener');
-      } else {
-        rssBtn.classList.add('rss-btn--pulse');
-        setTimeout(() => rssBtn.classList.remove('rss-btn--pulse'), 600);
-      }
-    });
-  }
+  if (rssBtn) rssBtn.addEventListener('click', () => window.open(RSS_FEED_URL, '_blank', 'noopener'));
 
   const articlesList = document.getElementById('articlesList');
-  renderArticleList(articlesList, ARTICLES);
-  setupArticleFilters(document.getElementById('articleFilters'), articlesList);
+  const filtersEl = document.getElementById('articleFilters');
+
+  async function loadArticles() {
+    let articles = ARTICLES;
+    try {
+      const res = await fetch('/api/articles');
+      if (res.ok) {
+        const rss = await res.json();
+        if (Array.isArray(rss) && rss.length > 0) articles = rss;
+      }
+    } catch (_) {}
+    renderArticleList(articlesList, articles);
+    setupArticleFilters(filtersEl, articlesList, articles);
+  }
+  loadArticles();
 </script>
 <script src="script.js"></script>
 </body>

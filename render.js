@@ -372,8 +372,12 @@ function renderProjectDetailPage() {
 /* ===== Articles ===== */
 
 function articleRowHTML(article) {
+  const imgHTML = article.image
+    ? `<img class="article-row__img" src="${escapeHTML(article.image)}" alt="" loading="lazy">`
+    : '';
   return `
-    <a class="article-row reveal" href="article.html?slug=${encodeURIComponent(article.slug)}" data-category="${escapeHTML(article.category)}">
+    <a class="article-row reveal${article.image ? ' article-row--has-img' : ''}" href="article.html?slug=${encodeURIComponent(article.slug)}" data-category="${escapeHTML(article.category)}">
+      ${imgHTML}
       <span class="article-row__date">${formatDate(article.date)}</span>
       <span class="article-row__category">${escapeHTML(article.category)}</span>
       <h3 class="article-row__title">${escapeHTML(article.title)}</h3>
@@ -387,9 +391,10 @@ function renderArticleList(container, articles) {
   container.innerHTML = articles.map(articleRowHTML).join('');
 }
 
-function setupArticleFilters(filterContainer, listContainer) {
+function setupArticleFilters(filterContainer, listContainer, articles) {
   if (!filterContainer || !listContainer) return;
-  const categories = ['All', ...new Set(ARTICLES.map((a) => a.category))];
+  const data = articles || ARTICLES;
+  const categories = ['All', ...new Set(data.map((a) => a.category))];
   filterContainer.innerHTML = categories
     .map((c, i) => `<button class="filter-chip${i === 0 ? ' is-active' : ''}" data-filter="${escapeHTML(c)}" type="button">${escapeHTML(c)}</button>`)
     .join('');
@@ -405,36 +410,58 @@ function setupArticleFilters(filterContainer, listContainer) {
   });
 }
 
-function renderRelatedArticles(container, currentSlug) {
+function renderRelatedArticles(container, currentSlug, articles) {
   if (!container) return;
-  const related = pickRelated(ARTICLES, currentSlug, 3);
+  const data = articles || ARTICLES;
+  const related = pickRelated(data, currentSlug, 3);
   container.innerHTML = related.map(articleRowHTML).join('');
 }
 
-function renderArticleDetailPage() {
+function renderArticleDetailPage(articles) {
+  const data = articles || ARTICLES;
   const slug = getQueryParam('slug');
-  const article = ARTICLES.find((a) => a.slug === slug) || ARTICLES[0];
+  const article = data.find((a) => a.slug === slug) || data[0];
+  if (!article) return;
   document.title = `${article.title} — Antiphono`;
 
   const hero = document.getElementById('articleHero');
   if (hero) {
-    hero.innerHTML = `
-      <div class="work-tile__visual work-tile__visual--${article.visual}">${VISUAL_ICONS[article.visual] || ''}</div>
-      <div class="work-tile__scrim"></div>
-      <div class="project-hero__content">
-        <a class="project-hero__back" href="articles.html">&larr; All articles</a>
-        <div class="work-tile__chips"><span class="chip">${escapeHTML(article.category)}</span></div>
-        <h1 class="project-hero__title">${escapeHTML(article.title)}</h1>
-        <p class="project-hero__meta">${formatDate(article.date)}</p>
-      </div>`;
+    if (article.image) {
+      hero.classList.add('article-hero--photo');
+      hero.innerHTML = `
+        <img class="article-hero__img" src="${escapeHTML(article.image)}" alt="">
+        <div class="work-tile__scrim"></div>
+        <div class="project-hero__content">
+          <a class="project-hero__back" href="articles.html">&larr; All articles</a>
+          <div class="work-tile__chips"><span class="chip">${escapeHTML(article.category)}</span></div>
+          <h1 class="project-hero__title">${escapeHTML(article.title)}</h1>
+          <p class="project-hero__meta">${formatDate(article.date)}${article.author ? ' &middot; ' + escapeHTML(article.author) : ''}</p>
+        </div>`;
+    } else {
+      const visual = article.visual || 'fintech';
+      hero.innerHTML = `
+        <div class="work-tile__visual work-tile__visual--${visual}">${VISUAL_ICONS[visual] || ''}</div>
+        <div class="work-tile__scrim"></div>
+        <div class="project-hero__content">
+          <a class="project-hero__back" href="articles.html">&larr; All articles</a>
+          <div class="work-tile__chips"><span class="chip">${escapeHTML(article.category)}</span></div>
+          <h1 class="project-hero__title">${escapeHTML(article.title)}</h1>
+          <p class="project-hero__meta">${formatDate(article.date)}${article.author ? ' &middot; ' + escapeHTML(article.author) : ''}</p>
+        </div>`;
+    }
   }
 
   const body = document.getElementById('articleBody');
   if (body) {
-    body.innerHTML = article.body.map((p) => `<p>${escapeHTML(p)}</p>`).join('');
+    if (Array.isArray(article.body)) {
+      body.innerHTML = article.body.map((p) => `<p>${escapeHTML(p)}</p>`).join('');
+    } else {
+      // RSS HTML content — render as-is
+      body.innerHTML = article.body;
+    }
   }
 
-  renderRelatedArticles(document.getElementById('relatedArticles'), article.slug);
+  renderRelatedArticles(document.getElementById('relatedArticles'), article.slug, data);
 }
 
 /* ===== Reports ===== */

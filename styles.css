@@ -604,6 +604,7 @@ body.nav-open{overflow:hidden;}
   border-bottom:1px solid var(--cream);padding-bottom:2px;
 }
 .book-panel{border:1px solid var(--line);padding:28px;border-radius:var(--radius);background:var(--bg-raised);}
+.book-panel iframe{display:block;border-radius:4px;filter:invert(1) hue-rotate(180deg);}
 .book-panel__placeholder{
   height:220px;border:1px dashed var(--line);border-radius:var(--radius);
   display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;

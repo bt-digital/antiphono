@@ -308,7 +308,19 @@
 <script>
   renderWorkScroll(document.getElementById('workScroll'), PROJECTS.slice(0, 4));
   renderReportList(document.getElementById('reportsList'), REPORTS);
-  renderArticleList(document.getElementById('articlesList'), ARTICLES.slice(0, 5));
+
+  const articlesList = document.getElementById('articlesList');
+  fetch('/api/articles')
+    .then(r => r.ok ? r.json() : [])
+    .then(articles => {
+      const list = Array.isArray(articles) ? articles.slice(0, 5) : [];
+      renderArticleList(articlesList, list);
+      articlesList.querySelectorAll('.reveal').forEach((el, i) => {
+        el.style.transitionDelay = `${(i % 6) * 60}ms`;
+        el.classList.add('is-visible');
+      });
+    })
+    .catch(() => {});
 </script>
 <script src="script.js"></script>
 </body>

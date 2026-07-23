@@ -208,7 +208,7 @@ function renderWorkScroll(container, projects) {
   chaptersEl.innerHTML = projects.map((p, i) => {
     const subtitle = p.title.includes(' — ') ? p.title.split(' — ').slice(1).join(' — ') : p.title;
     return `<a class="work-chapter${i === 0 ? ' is-active' : ''}"
-        href="work-project.html?slug=${encodeURIComponent(p.slug)}"
+        href="/work-project?slug=${encodeURIComponent(p.slug)}"
         data-index="${i}"
         data-visual="${escapeHTML(p.visual)}">
       <span class="work-chapter__client">${String(i + 1).padStart(2, '0')} / ${escapeHTML(p.client)}</span>
@@ -265,7 +265,7 @@ function workTileHTML(project, positionClass) {
     ? '<span class="chip-active"><span class="chip-active__dot"></span>Active</span>'
     : '';
   return `
-    <a class="work-tile ${positionClass} reveal" href="work-project.html?slug=${encodeURIComponent(project.slug)}">
+    <a class="work-tile ${positionClass} reveal" href="/work-project?slug=${encodeURIComponent(project.slug)}">
       <div class="work-tile__visual work-tile__visual--${project.visual}">${VISUAL_ICONS[project.visual] || ''}</div>
       <div class="work-tile__scrim"></div>
       ${activeChip}
@@ -297,7 +297,7 @@ function compactProjectTileHTML(project) {
     ? '<span class="chip-active"><span class="chip-active__dot"></span>Active</span>'
     : '';
   return `
-    <a class="work-tile work-tile--compact reveal" href="work-project.html?slug=${encodeURIComponent(project.slug)}">
+    <a class="work-tile work-tile--compact reveal" href="/work-project?slug=${encodeURIComponent(project.slug)}">
       <div class="work-tile__visual work-tile__visual--${project.visual}">${VISUAL_ICONS[project.visual] || ''}</div>
       <div class="work-tile__scrim"></div>
       ${activeChip}
@@ -332,7 +332,7 @@ function renderProjectDetailPage() {
       <div class="work-tile__scrim"></div>
       ${activeChip}
       <div class="project-hero__content">
-        <a class="project-hero__back" href="work.html">&larr; All work</a>
+        <a class="project-hero__back" href="/work">&larr; All work</a>
         <div class="work-tile__chips">${chipsHTML(project.categories)}</div>
         <h1 class="project-hero__title">${escapeHTML(project.title)}</h1>
         <p class="project-hero__meta">${escapeHTML(project.client)} &middot; ${escapeHTML(project.year)}</p>
@@ -376,7 +376,7 @@ function articleRowHTML(article) {
     ? `<img class="article-row__img" src="${escapeHTML(article.image)}" alt="" loading="lazy">`
     : '';
   return `
-    <a class="article-row reveal${article.image ? ' article-row--has-img' : ''}" href="article.html?slug=${encodeURIComponent(article.slug)}" data-category="${escapeHTML(article.category)}">
+    <a class="article-row reveal${article.image ? ' article-row--has-img' : ''}" href="/article?slug=${encodeURIComponent(article.slug)}" data-category="${escapeHTML(article.category)}">
       ${imgHTML}
       <span class="article-row__date">${formatDate(article.date)}</span>
       <span class="article-row__category">${escapeHTML(article.category)}</span>
@@ -437,7 +437,7 @@ function renderArticleDetailPage(articles) {
         <img class="article-hero__img" src="${escapeHTML(article.image)}" alt="">
         <div class="work-tile__scrim"></div>
         <div class="project-hero__content">
-          <a class="project-hero__back" href="articles.html">&larr; All articles</a>
+          <a class="project-hero__back" href="/articles">&larr; All articles</a>
           <div class="work-tile__chips"><span class="chip">${escapeHTML(article.category)}</span></div>
           <h1 class="project-hero__title">${escapeHTML(article.title)}</h1>
           <p class="project-hero__meta">${formatDate(article.date)}${article.author ? ' &middot; ' + escapeHTML(article.author) : ''}</p>
@@ -448,7 +448,7 @@ function renderArticleDetailPage(articles) {
         <div class="work-tile__visual work-tile__visual--${visual}">${VISUAL_ICONS[visual] || ''}</div>
         <div class="work-tile__scrim"></div>
         <div class="project-hero__content">
-          <a class="project-hero__back" href="articles.html">&larr; All articles</a>
+          <a class="project-hero__back" href="/articles">&larr; All articles</a>
           <div class="work-tile__chips"><span class="chip">${escapeHTML(article.category)}</span></div>
           <h1 class="project-hero__title">${escapeHTML(article.title)}</h1>
           <p class="project-hero__meta">${formatDate(article.date)}${article.author ? ' &middot; ' + escapeHTML(article.author) : ''}</p>

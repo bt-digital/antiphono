@@ -220,6 +220,21 @@ http.createServer((req, res) => {
 
   fs.readFile(filePath, (err, data) => {
     if (err) {
+      // Extensionless URL: try appending .html before falling back to index
+      if (!path.extname(filePath)) {
+        return fs.readFile(filePath + '.html', (err2, data2) => {
+          if (!err2) {
+            res.writeHead(200, { 'Content-Type': MIME['.html'] });
+            res.end(data2);
+            return;
+          }
+          fs.readFile(path.join(ROOT, 'index.html'), (err3, fallback) => {
+            if (err3) { res.writeHead(404); res.end('Not found'); return; }
+            res.writeHead(200, { 'Content-Type': MIME['.html'] });
+            res.end(fallback);
+          });
+        });
+      }
       fs.readFile(path.join(ROOT, 'index.html'), (err2, fallback) => {
         if (err2) { res.writeHead(404); res.end('Not found'); return; }
         res.writeHead(200, { 'Content-Type': MIME['.html'] });

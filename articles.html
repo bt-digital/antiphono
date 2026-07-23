@@ -116,6 +116,10 @@
     } catch (_) {}
     renderArticleList(articlesList, articles);
     setupArticleFilters(filtersEl, articlesList, articles);
+    articlesList.querySelectorAll('.reveal').forEach((el, i) => {
+      el.style.transitionDelay = `${(i % 6) * 60}ms`;
+      el.classList.add('is-visible');
+    });
   }
   loadArticles();
 </script>

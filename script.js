@@ -4,17 +4,17 @@ document.getElementById('year').textContent = new Date().getFullYear();
 // ===== Scroll reveal =====
 const revealEls = document.querySelectorAll('.reveal');
 if ('IntersectionObserver' in window){
-  const io = new IntersectionObserver((entries) => {
+  window.revealObserver = new IntersectionObserver((entries) => {
     entries.forEach(entry => {
       if (entry.isIntersecting){
         entry.target.classList.add('is-visible');
-        io.unobserve(entry.target);
+        window.revealObserver.unobserve(entry.target);
       }
     });
   }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
   revealEls.forEach((el, i) => {
     el.style.transitionDelay = `${(i % 6) * 60}ms`;
-    io.observe(el);
+    window.revealObserver.observe(el);
   });
 } else {
   revealEls.forEach(el => el.classList.add('is-visible'));

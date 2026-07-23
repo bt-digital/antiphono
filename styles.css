@@ -603,8 +603,8 @@ body.nav-open{overflow:hidden;}
   color:var(--cream);
   border-bottom:1px solid var(--cream);padding-bottom:2px;
 }
-.book-panel{border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);}
-.book-panel iframe{display:block;height:1200px;filter:invert(1) grayscale(1) sepia(0.18) brightness(1.05);}
+.book-panel{border:1px solid var(--line);border-radius:var(--radius);background:var(--bg);overflow:hidden;}
+#cal-inline{width:100%;}
 @media (max-width:760px){.book-grid{grid-template-columns:1fr;}}
 
 /* ===== Project / article detail hero ===== */

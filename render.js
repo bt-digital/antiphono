@@ -185,6 +185,101 @@ const FRAME_CONTENT = {
 </svg>`
 };
 
+/* ===== Image path encoding ===== */
+function encodeImagePath(path) {
+  if (!path) return '';
+  return path.replace(/ /g, '%20');
+}
+
+/* ===== Project section rendering ===== */
+function renderSectionHTML(sec) {
+  switch (sec.type) {
+    case 'fullwidth':
+      return `<div class="proj-section proj-section--fullwidth">
+        <img src="${encodeImagePath(sec.image)}" alt="${escapeHTML(sec.alt || '')}" loading="lazy">
+      </div>`;
+
+    case 'split': {
+      const imgCol = `<div class="proj-split__image"><img src="${encodeImagePath(sec.image)}" alt="${escapeHTML(sec.alt || '')}" loading="lazy"></div>`;
+      const txtCol = `<div class="proj-split__text">
+        ${sec.eyebrow ? `<span class="proj-split__eyebrow">${escapeHTML(sec.eyebrow)}</span>` : ''}
+        ${sec.heading ? `<h2 class="proj-split__heading">${escapeHTML(sec.heading)}</h2>` : ''}
+        ${sec.body ? `<p class="proj-split__body">${escapeHTML(sec.body)}</p>` : ''}
+      </div>`;
+      const content = sec.flip ? txtCol + imgCol : imgCol + txtCol;
+      return `<div class="proj-section proj-section--split${sec.flip ? ' is-flipped' : ''}">${content}</div>`;
+    }
+
+    case 'slider': {
+      const slides = sec.slides || [];
+      const firstCaption = slides[0] ? escapeHTML(slides[0].caption || '') : '';
+      return `<div class="proj-section proj-section--slider">
+        <div class="proj-slider__header">
+          ${sec.label ? `<span class="proj-slider__label">${escapeHTML(sec.label)}</span>` : '<span></span>'}
+          <span class="proj-slider__progress">01 / ${String(slides.length).padStart(2, '0')}</span>
+        </div>
+        <div class="proj-slider__track">
+          ${slides.map((s, i) => `<div class="proj-slider__slide" data-caption="${escapeHTML(s.caption || '')}" data-index="${i}">
+            <img src="${encodeImagePath(s.image)}" alt="${escapeHTML(s.caption || '')}" loading="${i === 0 ? 'eager' : 'lazy'}">
+          </div>`).join('')}
+        </div>
+        <div class="proj-slider__footer">
+          <button class="proj-slider__btn proj-slider__btn--prev" aria-label="Previous slide">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><path d="M15 18l-6-6 6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <button class="proj-slider__btn proj-slider__btn--next" aria-label="Next slide">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" aria-hidden="true"><path d="M9 18l6-6-6-6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <span class="proj-slider__caption">${firstCaption}</span>
+        </div>
+      </div>`;
+    }
+
+    case 'grid': {
+      const images = sec.images || [];
+      const cols = sec.cols || 2;
+      return `<div class="proj-section proj-section--grid">
+        <div class="proj-grid proj-grid--${cols}col">
+          ${images.map((img) => `<div class="proj-grid__item">
+            <img src="${encodeImagePath(img.image)}" alt="${escapeHTML(img.alt || '')}" loading="lazy">
+          </div>`).join('')}
+        </div>
+      </div>`;
+    }
+
+    default: return '';
+  }
+}
+
+function initProjectSliders() {
+  document.querySelectorAll('.proj-section--slider').forEach((section) => {
+    const track = section.querySelector('.proj-slider__track');
+    const slides = track ? [...track.querySelectorAll('.proj-slider__slide')] : [];
+    if (!slides.length) return;
+    const prevBtn = section.querySelector('.proj-slider__btn--prev');
+    const nextBtn = section.querySelector('.proj-slider__btn--next');
+    const captionEl = section.querySelector('.proj-slider__caption');
+    const progressEl = section.querySelector('.proj-slider__progress');
+    let current = 0;
+    const goTo = (n) => {
+      current = (n + slides.length) % slides.length;
+      track.scrollTo({ left: slides[current].offsetLeft, behavior: 'smooth' });
+      if (captionEl) captionEl.textContent = slides[current].dataset.caption || '';
+      if (progressEl) progressEl.textContent = `${String(current + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+    };
+    if (prevBtn) prevBtn.addEventListener('click', () => goTo(current - 1));
+    if (nextBtn) nextBtn.addEventListener('click', () => goTo(current + 1));
+    track.addEventListener('scroll', () => {
+      const idx = Math.round(track.scrollLeft / (track.clientWidth || 1));
+      if (idx !== current && idx >= 0 && idx < slides.length) {
+        current = idx;
+        if (captionEl) captionEl.textContent = slides[current].dataset.caption || '';
+        if (progressEl) progressEl.textContent = `${String(current + 1).padStart(2, '0')} / ${String(slides.length).padStart(2, '0')}`;
+      }
+    }, { passive: true });
+  });
+}
+
 /* ===== Work scroll: cinematic immersive homepage showcase ===== */
 function renderWorkScroll(container, projects) {
   if (!container) return;
@@ -338,7 +433,7 @@ function renderProjectDetailPage() {
       ? '<span class="chip-active"><span class="chip-active__dot"></span>Active</span>'
       : '';
     const heroVisualStyle = project.coverImage
-      ? ` style="background-image:url('${escapeHTML(project.coverImage)}');background-size:cover;background-position:center top;"`
+      ? ` style="background-image:url('${encodeImagePath(project.coverImage)}');background-size:cover;background-position:center top;"`
       : '';
     const heroVisualContent = project.coverImage ? '' : (VISUAL_ICONS[project.visual] || '');
     hero.innerHTML = `
@@ -349,7 +444,7 @@ function renderProjectDetailPage() {
         <a class="project-hero__back" href="/work">&larr; All work</a>
         <div class="work-tile__chips">${chipsHTML(project.categories)}</div>
         <h1 class="project-hero__title">${escapeHTML(project.title)}</h1>
-        <p class="project-hero__meta">${escapeHTML(project.client)} &middot; ${escapeHTML(project.year)}</p>
+        <p class="project-hero__meta">${escapeHTML(project.client)}</p>
       </div>`;
   }
 
@@ -364,7 +459,6 @@ function renderProjectDetailPage() {
       </div>
       <ul class="project-overview__meta">
         <li><span class="project-overview__meta-label">Client</span>${escapeHTML(project.client)}</li>
-        <li><span class="project-overview__meta-label">Year</span>${escapeHTML(project.year)}</li>
         <li><span class="project-overview__meta-label">Discipline</span>${escapeHTML(project.categories.join(', '))}</li>
         ${deliverablesRow}
         <li><span class="project-overview__meta-label">Status</span>${project.active ? 'Active engagement' : 'Completed'}</li>
@@ -373,19 +467,8 @@ function renderProjectDetailPage() {
 
   const gallery = document.getElementById('projectGallery');
   if (gallery) {
-    gallery.innerHTML = project.gallery
-      .map((g, i) => {
-        const imgSrc = project.images && project.images[i];
-        const panelInner = imgSrc
-          ? `<img src="${escapeHTML(imgSrc)}" alt="${escapeHTML(g.caption)}" style="width:100%;height:100%;object-fit:cover;display:block;">`
-          : `<div class="gallery-panel__visual work-tile__visual--${project.visual}">${VISUAL_ICONS[project.visual] || ''}</div>`;
-        return `
-      <figure class="gallery-panel">
-        <div class="gallery-panel__visual" style="background:var(--dark-surface);">${panelInner}</div>
-        <figcaption class="gallery-panel__caption">${escapeHTML(g.caption)}</figcaption>
-      </figure>`;
-      })
-      .join('');
+    gallery.innerHTML = (project.sections || []).map(renderSectionHTML).join('');
+    initProjectSliders();
   }
 
   renderMoreProjects(document.getElementById('moreProjects'), project.slug);

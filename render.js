@@ -193,9 +193,11 @@ function renderWorkScroll(container, projects) {
   if (!stage || !chaptersEl) return;
 
   stage.innerHTML = projects.map((p, i) => {
-    const svg = FRAME_CONTENT[p.visual] || FRAME_CONTENT.fintech;
+    const frameInner = p.coverImage
+      ? `<img src="${escapeHTML(p.coverImage)}" alt="${escapeHTML(p.client)}" style="width:100%;height:100%;object-fit:cover;display:block;">`
+      : (FRAME_CONTENT[p.visual] || FRAME_CONTENT.fintech);
     return `<div class="work-frame${i === 0 ? ' is-active' : ''}" data-frame="${i}">
-      <div class="work-frame__asset">${svg}</div>
+      <div class="work-frame__asset">${frameInner}</div>
     </div>`;
   }).join('') + `
     <div class="work-scroll__stage-footer">
@@ -264,9 +266,13 @@ function workTileHTML(project, positionClass) {
   const activeChip = project.active
     ? '<span class="chip-active"><span class="chip-active__dot"></span>Active</span>'
     : '';
+  const visualStyle = project.coverImage
+    ? ` style="background-image:url('${escapeHTML(project.coverImage)}');background-size:cover;background-position:center;"`
+    : '';
+  const visualContent = project.coverImage ? '' : (VISUAL_ICONS[project.visual] || '');
   return `
     <a class="work-tile ${positionClass} reveal" href="/work-project?slug=${encodeURIComponent(project.slug)}">
-      <div class="work-tile__visual work-tile__visual--${project.visual}">${VISUAL_ICONS[project.visual] || ''}</div>
+      <div class="work-tile__visual work-tile__visual--${project.visual}"${visualStyle}>${visualContent}</div>
       <div class="work-tile__scrim"></div>
       ${activeChip}
       <div class="work-tile__content">
@@ -296,9 +302,13 @@ function compactProjectTileHTML(project) {
   const activeChip = project.active
     ? '<span class="chip-active"><span class="chip-active__dot"></span>Active</span>'
     : '';
+  const visualStyle = project.coverImage
+    ? ` style="background-image:url('${escapeHTML(project.coverImage)}');background-size:cover;background-position:center;"`
+    : '';
+  const visualContent = project.coverImage ? '' : (VISUAL_ICONS[project.visual] || '');
   return `
     <a class="work-tile work-tile--compact reveal" href="/work-project?slug=${encodeURIComponent(project.slug)}">
-      <div class="work-tile__visual work-tile__visual--${project.visual}">${VISUAL_ICONS[project.visual] || ''}</div>
+      <div class="work-tile__visual work-tile__visual--${project.visual}"${visualStyle}>${visualContent}</div>
       <div class="work-tile__scrim"></div>
       ${activeChip}
       <div class="work-tile__content">
@@ -327,8 +337,12 @@ function renderProjectDetailPage() {
     const activeChip = project.active
       ? '<span class="chip-active"><span class="chip-active__dot"></span>Active</span>'
       : '';
+    const heroVisualStyle = project.coverImage
+      ? ` style="background-image:url('${escapeHTML(project.coverImage)}');background-size:cover;background-position:center top;"`
+      : '';
+    const heroVisualContent = project.coverImage ? '' : (VISUAL_ICONS[project.visual] || '');
     hero.innerHTML = `
-      <div class="work-tile__visual work-tile__visual--${project.visual}">${VISUAL_ICONS[project.visual] || ''}</div>
+      <div class="work-tile__visual work-tile__visual--${project.visual}"${heroVisualStyle}>${heroVisualContent}</div>
       <div class="work-tile__scrim"></div>
       ${activeChip}
       <div class="project-hero__content">
@@ -341,6 +355,9 @@ function renderProjectDetailPage() {
 
   const overview = document.getElementById('projectOverview');
   if (overview) {
+    const deliverablesRow = project.deliverables
+      ? `<li><span class="project-overview__meta-label">Deliverables</span>${escapeHTML(project.deliverables.join(', '))}</li>`
+      : '';
     overview.innerHTML = `
       <div class="project-overview__text">
         ${project.overview.map((p) => `<p>${escapeHTML(p)}</p>`).join('')}
@@ -349,6 +366,7 @@ function renderProjectDetailPage() {
         <li><span class="project-overview__meta-label">Client</span>${escapeHTML(project.client)}</li>
         <li><span class="project-overview__meta-label">Year</span>${escapeHTML(project.year)}</li>
         <li><span class="project-overview__meta-label">Discipline</span>${escapeHTML(project.categories.join(', '))}</li>
+        ${deliverablesRow}
         <li><span class="project-overview__meta-label">Status</span>${project.active ? 'Active engagement' : 'Completed'}</li>
       </ul>`;
   }
@@ -356,13 +374,17 @@ function renderProjectDetailPage() {
   const gallery = document.getElementById('projectGallery');
   if (gallery) {
     gallery.innerHTML = project.gallery
-      .map(
-        (g) => `
+      .map((g, i) => {
+        const imgSrc = project.images && project.images[i];
+        const panelInner = imgSrc
+          ? `<img src="${escapeHTML(imgSrc)}" alt="${escapeHTML(g.caption)}" style="width:100%;height:100%;object-fit:cover;display:block;">`
+          : `<div class="gallery-panel__visual work-tile__visual--${project.visual}">${VISUAL_ICONS[project.visual] || ''}</div>`;
+        return `
       <figure class="gallery-panel">
-        <div class="gallery-panel__visual work-tile__visual--${project.visual}">${VISUAL_ICONS[project.visual] || ''}</div>
+        <div class="gallery-panel__visual" style="background:var(--dark-surface);">${panelInner}</div>
         <figcaption class="gallery-panel__caption">${escapeHTML(g.caption)}</figcaption>
-      </figure>`
-      )
+      </figure>`;
+      })
       .join('');
   }
 

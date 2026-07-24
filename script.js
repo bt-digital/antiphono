@@ -14,25 +14,103 @@ if (cursor && window.matchMedia('(pointer: fine)').matches) {
     requestAnimationFrame(animCursor);
   };
   animCursor();
-  document.querySelectorAll('a, button, .capability, .work-item').forEach(el => {
+  document.querySelectorAll('a, button, .capability, .work-item, .process-item, .footer-nav-large a').forEach(el => {
     el.addEventListener('mouseenter', () => cursor.classList.add('is-hover'));
     el.addEventListener('mouseleave', () => cursor.classList.remove('is-hover'));
   });
 }
 
+// ===== Sticky nav: scrolled + on-light detection =====
+const topnav = document.getElementById('topnav');
+if (topnav) {
+  // Sections that are white background — nav text should flip dark
+  const lightSections = document.querySelectorAll('.manifesto, .stats-section, .thinking-section');
+
+  const navH = topnav.offsetHeight || 64;
+
+  const updateNav = () => {
+    const scrollY = window.scrollY;
+    topnav.classList.toggle('is-scrolled', scrollY > 20);
+    topnav.classList.toggle('is-compact', scrollY > 20); // legacy alias
+
+    // Detect if we're over a light section
+    let onLight = false;
+    lightSections.forEach(sec => {
+      const rect = sec.getBoundingClientRect();
+      if (rect.top < navH && rect.bottom > 0) onLight = true;
+    });
+    topnav.classList.toggle('on-light', onLight);
+  };
+
+  updateNav();
+  window.addEventListener('scroll', updateNav, { passive: true });
+}
+
+// ===== Hero wordmark — per-character reveal =====
+const wordmark = document.querySelector('.hero__wordmark');
+if (wordmark) {
+  // Wrap each character in a .char span (text may already have this in HTML, but do it here as fallback)
+  const rawText = wordmark.textContent;
+  const alreadyWrapped = wordmark.querySelector('.char');
+  if (!alreadyWrapped) {
+    wordmark.innerHTML = rawText.split('').map(c =>
+      `<span class="char" aria-hidden="true">${c === ' ' ? '&nbsp;' : c}</span>`
+    ).join('');
+    wordmark.setAttribute('aria-label', rawText);
+  }
+
+  const chars = wordmark.querySelectorAll('.char');
+  // Stagger each character
+  chars.forEach((ch, i) => {
+    ch.style.transitionDelay = `${80 + i * 45}ms`;
+  });
+
+  // Trigger on next tick so CSS is parsed
+  requestAnimationFrame(() => {
+    setTimeout(() => {
+      wordmark.classList.add('is-visible');
+    }, 120);
+  });
+}
+
+// Eyebrow + hero footer
+setTimeout(() => {
+  const eyebrow = document.getElementById('heroEyebrow');
+  if (eyebrow) eyebrow.classList.add('is-visible');
+  document.querySelectorAll('.hero__foot').forEach(el => {
+    el.style.opacity = '0';
+    el.style.transform = 'translateY(8px)';
+    el.style.transition = 'opacity 0.7s cubic-bezier(0.16,1,0.3,1), transform 0.7s cubic-bezier(0.16,1,0.3,1)';
+    el.style.transitionDelay = '800ms';
+    setTimeout(() => { el.style.opacity = '1'; el.style.transform = 'translateY(0)'; }, 50);
+  });
+}, 100);
+
 // ===== Scroll reveal — IntersectionObserver =====
-const revealObserver = new IntersectionObserver((entries) => {
+const revealObs = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) {
       e.target.classList.add('is-visible');
-      revealObserver.unobserve(e.target);
+      revealObs.unobserve(e.target);
     }
   });
-}, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
+}, { threshold: 0.10, rootMargin: '0px 0px -60px 0px' });
 
-document.querySelectorAll('.fade-up, .img-reveal, [data-reveal]').forEach(el => revealObserver.observe(el));
+document.querySelectorAll('.fade-up, .img-reveal, .text-reveal').forEach(el => revealObs.observe(el));
 
-// Legacy .reveal support
+// Process items — data-reveal
+const processObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('is-visible');
+      processObs.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.15, rootMargin: '0px 0px -80px 0px' });
+
+document.querySelectorAll('[data-reveal], .process-item').forEach(el => processObs.observe(el));
+
+// Legacy .reveal
 const legacyRevealObs = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) {
@@ -47,18 +125,22 @@ document.querySelectorAll('.reveal').forEach((el, i) => {
   legacyRevealObs.observe(el);
 });
 
-// ===== Hero text reveal on load =====
-setTimeout(() => {
-  document.querySelectorAll('.hero .text-reveal').forEach((el, i) => {
-    setTimeout(() => el.classList.add('is-visible'), i * 160);
+// Manifesto statement lines — staggered text reveal
+const manifestoObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.querySelectorAll('.text-reveal').forEach((line, i) => {
+        setTimeout(() => line.classList.add('is-visible'), i * 120);
+      });
+      manifestoObs.unobserve(e.target);
+    }
   });
-  const eyebrow = document.getElementById('heroEyebrow');
-  if (eyebrow) setTimeout(() => eyebrow.classList.add('is-visible'), 100);
-  const heroMedia = document.getElementById('heroMedia');
-  if (heroMedia) setTimeout(() => heroMedia.classList.add('is-visible'), 600);
-}, 100);
+}, { threshold: 0.2 });
 
-// ===== Book section text reveal =====
+const manifestoSection = document.querySelector('.manifesto');
+if (manifestoSection) manifestoObs.observe(manifestoSection);
+
+// Book section text reveal
 const bookRevealObs = new IntersectionObserver((entries) => {
   entries.forEach(e => {
     if (e.isIntersecting) {
@@ -73,45 +155,77 @@ const bookRevealObs = new IntersectionObserver((entries) => {
 const bookSection = document.querySelector('.book-section');
 if (bookSection) bookRevealObs.observe(bookSection);
 
-// ===== Parallax on work items and hero media =====
-const parallaxEls = document.querySelectorAll('.work-item .parallax-img');
-const heroParallax = document.querySelector('.hero__media-inner');
+// ===== Counter animation (.js-counter) =====
+const counterObs = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    const target = parseFloat(el.dataset.target || el.textContent);
+    const suffix = el.dataset.suffix || '';
+    const duration = 1600;
+    const start = performance.now();
+    const isDecimal = target % 1 !== 0;
 
-const handleParallax = () => {
-  parallaxEls.forEach(el => {
-    const item = el.closest('.work-item');
-    if (!item) return;
-    const rect = item.getBoundingClientRect();
+    const tick = (now) => {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      // Ease out expo
+      const ease = 1 - Math.pow(1 - progress, 4);
+      const current = target * ease;
+      el.textContent = (isDecimal ? current.toFixed(1) : Math.round(current)) + suffix;
+      if (progress < 1) requestAnimationFrame(tick);
+    };
+
+    requestAnimationFrame(tick);
+    counterObs.unobserve(el);
+  });
+}, { threshold: 0.5 });
+
+document.querySelectorAll('.js-counter').forEach(el => {
+  // Initialise to 0 so there's no flash of the final value
+  const suffix = el.dataset.suffix || '';
+  el.textContent = '0' + suffix;
+  counterObs.observe(el);
+});
+
+// ===== Parallax =====
+const parallaxItems = [];
+
+// Work item images (.parallax-img class)
+document.querySelectorAll('.work-item__img, .parallax-img').forEach(el => {
+  if (!parallaxItems.find(p => p.el === el)) {
+    parallaxItems.push({ el, parent: el.closest('.work-item') || el.parentElement, speed: 0.13 });
+  }
+});
+
+// All .parallax-bg elements — covers hero-image__inner, process__image-inner, etc.
+document.querySelectorAll('.parallax-bg').forEach(el => {
+  const parent = el.closest('.hero-image') || el.closest('.process__image') || el.parentElement;
+  parallaxItems.push({ el, parent, speed: 0.10 });
+});
+
+const runParallax = () => {
+  const wh = window.innerHeight;
+  parallaxItems.forEach(({ el, parent, speed }) => {
+    if (!parent) return;
+    const rect = parent.getBoundingClientRect();
+    if (rect.bottom < -100 || rect.top > wh + 100) return; // off-screen skip
     const mid = rect.top + rect.height / 2;
-    const offset = (mid - window.innerHeight / 2) * 0.15;
+    const offset = (mid - wh / 2) * speed;
     el.style.transform = `translateY(${offset}px) scale(1.15)`;
   });
-  if (heroParallax) {
-    const offset = window.scrollY * 0.08;
-    heroParallax.style.transform = `translateY(${offset}px) scale(1.12)`;
-  }
 };
 
-window.addEventListener('scroll', handleParallax, { passive: true });
-handleParallax();
+window.addEventListener('scroll', runParallax, { passive: true });
+runParallax();
 
-// ===== Sticky nav: compact on scroll =====
-const topnav = document.getElementById('topnav');
-if (topnav) {
-  const THRESHOLD = 20;
-  let ticking = false;
-  const applyNavState = () => {
-    topnav.classList.toggle('is-compact', window.scrollY > THRESHOLD);
-    ticking = false;
-  };
-  applyNavState();
-  window.addEventListener('scroll', () => {
-    if (!ticking) {
-      requestAnimationFrame(applyNavState);
-      ticking = true;
-    }
-  }, { passive: true });
-}
+// ===== Work item hover effect — animate bg scale =====
+document.querySelectorAll('.work-item').forEach(item => {
+  const img = item.querySelector('.work-item__img');
+  if (!img) return;
+  item.addEventListener('mouseenter', () => { img.style.transform = 'scale(1.0) translateY(0)'; });
+  item.addEventListener('mouseleave', () => { runParallax(); }); // restore parallax state
+});
 
 // ===== Work scroll: sync sticky stage with scrolled chapters (for work.html) =====
 const workChapterEls = document.querySelectorAll('.work-chapter');

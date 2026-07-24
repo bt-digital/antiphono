@@ -372,18 +372,15 @@ function renderProjectDetailPage() {
 /* ===== Articles ===== */
 
 function articleRowHTML(article) {
-  const imgHTML = article.image
-    ? `<img class="article-row__img" src="${escapeHTML(article.image)}" alt="" loading="lazy">`
-    : '';
   return `
-    <a class="article-row reveal${article.image ? ' article-row--has-img' : ''}" href="/article?slug=${encodeURIComponent(article.slug)}" data-category="${escapeHTML(article.category)}">
-      ${imgHTML}
-      <span class="article-row__date">${formatDate(article.date)}</span>
-      <span class="article-row__category">${escapeHTML(article.category)}</span>
+    <article class="article-row" data-category="${escapeHTML(article.category)}">
+      <div class="article-row__meta">
+        <span class="article-row__date">${formatDate(article.date)}</span>
+        <span class="article-row__cat">${escapeHTML(article.category)}</span>
+      </div>
       <h3 class="article-row__title">${escapeHTML(article.title)}</h3>
-      <p class="article-row__excerpt">${escapeHTML(article.excerpt)}</p>
-      <span class="article-row__cta">Read article ${ARROW_SVG}</span>
-    </a>`;
+      <a href="/article?slug=${encodeURIComponent(article.slug)}" class="article-row__link">Read &#8594;</a>
+    </article>`;
 }
 
 function renderArticleList(container, articles) {
